@@ -1,0 +1,9 @@
+Crc16.c:15:6:clearCrc	4	static
+Crc16.c:22:6:updateCrc	24	static
+Crc16.c:52:10:getCrc	4	static
+Crc16.c:68:14:fastCrc	40	static
+Crc16.c:115:9:reflect	24	static
+Crc16.c:136:10:reflect16	24	static
+Crc16.c:155:14:XModemCrc	40	static
+Crc16.c:159:14:Mcrf4XX	40	static
+Crc16.c:162:14:Modbus	40	static

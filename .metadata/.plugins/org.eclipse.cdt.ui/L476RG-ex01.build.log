@@ -1,0 +1,10 @@
+12:05:41 **** Incremental Build of configuration Debug for project L476RG-ex01 ****
+make -j4 all 
+arm-none-eabi-size   L476RG-ex01.elf 
+   text	   data	    bss	    dec	    hex	filename
+  20000	    120	   4568	  24688	   6070	L476RG-ex01.elf
+Finished building: default.size.stdout
+ 
+
+12:05:42 Build Finished. 0 errors, 0 warnings. (took 352ms)
+
