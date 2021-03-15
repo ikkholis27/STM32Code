@@ -40,7 +40,7 @@ stm32l4xx_hal_uart.c:2844:19:HAL_HalfDuplex_EnableReceiver	16	static
 stm32l4xx_hal_uart.c:2868:19:HAL_LIN_SendBreak	16	static
 stm32l4xx_hal_uart.c:2913:23:HAL_UART_GetState	24	static
 stm32l4xx_hal_uart.c:2929:10:HAL_UART_GetError	16	static
-stm32l4xx_hal_uart.c:2976:19:UART_SetConfig	56	static
+stm32l4xx_hal_uart.c:2976:19:UART_SetConfig	80	static
 stm32l4xx_hal_uart.c:3284:6:UART_AdvFeatureConfig	16	static
 stm32l4xx_hal_uart.c:3358:19:UART_CheckIdleState	32	static
 stm32l4xx_hal_uart.c:3408:19:UART_WaitOnFlagUntilTimeout	24	static

@@ -13,7 +13,7 @@ edmi_mk6n.h:268:14:readSNMK6N	8	static
 edmi_mk6n.h:284:6:setSNMK6N	16	static
 edmi_mk6n.h:290:6:setCommandMK6N	24	static
 edmi_mk6n.h:305:5:readTimeMK6N	8	static
-edmi_mk6n.h:324:6:readInstantMK6N	80	static
+edmi_mk6n.h:324:6:readInstantMK6N	72	static
 edmi_mk6n.h:363:6:txInstantMK6N	64	static
 edmi_mk6n.h:378:6:parsingDataRawInstantMK6N	32	static
 edmi_mk6n.h:397:6:decodeJsonInstantMK6N	24	static
@@ -44,9 +44,9 @@ edmi_mk6n.h:1103:14:checkregEoBRate2	16	static
 edmi_mk6n.h:1138:14:checkregEoBRate3	16	static
 edmi_mk6n.h:1173:14:checkregEoBRate4	16	static
 edmi_mk6n.h:1208:14:checkregEoBRate5	16	static
-edmi_mk6n.h:1243:6:readEoB	72	static
+edmi_mk6n.h:1243:6:readEoB	64	static
 edmi_mk6n.h:1291:6:readEoB2	56	static
-edmi_mk6n.h:1312:6:readEoB3	40	static
+edmi_mk6n.h:1312:6:readEoB3	32	static
 edmi_mk6n.h:1333:6:decodeEoB3	24	static
 edmi_mk6n.h:1343:5:readEoBInit1	8	static
 edmi_mk6n.h:1360:6:txEoBInit1	8	static
@@ -93,7 +93,7 @@ edmi_mk10e.h:864:6:txLPMK10E	24	static
 edmi_mk10e.h:885:6:rxLPMK10E	32	static
 edmi_mk10e.h:897:6:decodelpscaleMK10E	24	static
 edmi_mk10e.h:930:6:decodelpinitMK10E	16	static
-edmi_mk10e.h:944:5:decodelpdataMK10E	32	static
+edmi_mk10e.h:944:5:decodelpdataMK10E	24	static
 edmi_mk10e.h:964:6:lp2JsonMK10E	24	static
 edmi_mk10e.h:996:5:readEobLpInitMK10E	8	static
 edmi_mk10e.h:1022:6:txEobLpInitMK10E	8	static
@@ -112,11 +112,11 @@ edmi_mk10e.h:1596:6:txEoBCurrentMK10E	8	static
 edmi_mk10e.h:1608:6:rxEoBCurrentMK10E	32	static
 edmi_mk10e.h:1622:13:readEoBEnergyMK10E	8	static
 edmi_mk10e.h:1655:13:readEoBStanMK10E	8	static
-edmi_mk10e.h:1690:6:saveEoBDataMK10E	16	static
+edmi_mk10e.h:1690:6:saveEoBDataMK10E	8	static
 edmi.c:25:5:datasize	24	static
 edmi.c:32:5:datasizeChar	24	static
 edmi.c:39:6:dataclear	24	static
-edmi.c:56:8:hex2Double	24	static
+edmi.c:56:8:hex2Double	72	static
 edmi.c:77:7:hex2Float	16	static
 edmi.c:89:6:hex2Long	16	static
 edmi.c:101:15:hex2ULong	16	static

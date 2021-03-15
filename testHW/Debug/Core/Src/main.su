@@ -43,8 +43,8 @@ main.c:855:6:NBIOT_setup	296	static
 main.c:915:6:NBIOT_setup_IT	32	static
 main.c:961:6:MQTT_setup	8	static
 main.c:994:6:LSM6DSL_readRegister	32	static
-main.c:1008:6:LSM6DSL_setup	24	static
-main.c:1086:6:writeToSD1	24	static
+main.c:1008:6:LSM6DSL_setup	16	static
+main.c:1086:6:writeToSD1	16	static
 main.c:1126:6:read_instant_mk6n	32	static
 main.c:1197:6:read_eob_mk6n	32	static
 main.c:1294:6:read_lp_mk6n	40	static
@@ -66,11 +66,11 @@ main.c:2526:6:HAL_UART_RxCpltCallback	72	static
 main.c:2759:6:main_program	1192	static
 main.c:2839:6:read_gyro	64	static
 main.c:2902:6:send_data_to_server	104	static
-main.c:3060:6:read_EoB	1208	static
-main.c:3144:6:read_LP	1208	static
-main.c:3277:6:read_instant	1208	static
-main.c:3362:6:send_hard_bit	1184	static
-main.c:3428:6:check_vbat	48	static
+main.c:3060:6:read_EoB	1200	static
+main.c:3144:6:read_LP	1200	static
+main.c:3277:6:read_instant	1200	static
+main.c:3362:6:send_hard_bit	1176	static
+main.c:3428:6:check_vbat	40	static
 main.c:3466:6:check_vmon	24	static
 main.c:3500:6:HAL_TIM_PeriodElapsedCallback	16	static
 main.c:3517:6:Error_Handler	4	static
