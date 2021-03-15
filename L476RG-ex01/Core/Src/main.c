@@ -46,9 +46,7 @@ uint8_t debug = 1;
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
-UART_HandleTypeDef hlpuart1;
 UART_HandleTypeDef huart4;
-UART_HandleTypeDef huart5;
 UART_HandleTypeDef huart1;
 UART_HandleTypeDef huart3;
 
@@ -60,32 +58,33 @@ UART_HandleTypeDef huart3;
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_UART4_Init(void);
-static void MX_UART5_Init(void);
 static void MX_USART1_UART_Init(void);
 static void MX_USART3_UART_Init(void);
-static void MX_LPUART1_UART_Init(void);
 /* USER CODE BEGIN PFP */
-//int _write(int file, char *ptr, int len)
-// {
-//	 int DataIdx;
-//	 for (DataIdx = 0; DataIdx < len; DataIdx++)
-//	 {
-//		 ITM_SendChar(*ptr++);
-//	 }
-//	 return len;
-// }
-int _write(int file, char *ptr, int len){
-  HAL_UART_Transmit(&huart4, (uint8_t *)ptr, len, 0xff);
-  return len;
-}
+int _write(int file, char *ptr, int len)
+ {
+	 int DataIdx;
+	 for (DataIdx = 0; DataIdx < len; DataIdx++)
+	 {
+		 ITM_SendChar(*ptr++);
+	 }
+	 HAL_Delay(500);
+	 return len;
+ }
+//int _write(int file, char *ptr, int len){
+//  HAL_UART_Transmit(&huart4, (uint8_t *)ptr, len, 0xff);
+//  return len;
+//}
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 int i=0,j=0,k=0,l=0;
+int cnt1=0, cnt2=0, cnt3=0, cnt4=0, cnt5=0;
 bool uart3done, uart4busy, uart3disc;
 bool usemqtt,uart4done;
 int cntpok=0;
+int bugint;
 char uart4_at[20];
 
 char csq[20],cgatt[27];
@@ -97,6 +96,7 @@ char *ATSMSTATE="AT+SMSTATE?\r\n";
 char *ATSMPUB;
 char * temp_data;
 char * temp_data2;
+uint8_t * uart_uint8t;
 
 uint8_t rxavailable=0;
 
@@ -115,7 +115,7 @@ void SerialATprintln(char ptr[], uint32_t len, uint32_t timeout){
 	memcpy(ptr1, ptr, len);
 	ptr1[len]= '\r';
 	ptr1[len+1]= '\n';
-	HAL_UART_Transmit(&huart3, (uint8_t *) ptr1, len+2, timeout);
+	HAL_UART_Transmit(&huart1, (uint8_t *) ptr1, len+2, timeout);
 }
 
 void hard_reset_mdm(){
@@ -157,33 +157,37 @@ int bufsizechararray(char buf[])
 ///////////////////// MODEM FUNCTION
 void ATCOMMAND(char *command, char* res)
 {
-	char respond[120] = {0};
+//	char respond[120] = {0};
 //	char *ptr= strstr(respond,res);
 //	while(ptr == NULL){
-	memset(respond,0,strlen(respond));
-	HAL_UART_Transmit(&huart3,(uint8_t *)command,strlen(command),0xff);
-	HAL_UART_Receive(&huart3,(uint8_t *)respond,120,500);
+	memset(buffer,0,1100);
+	HAL_UART_Transmit(&huart1,(uint8_t *)command,strlen(command),0xff);
+	HAL_UART_Receive(&huart1,(uint8_t *)buffer,1100,500);
 //	ptr = strstr(respond,res);
 //	}
-	printf("%s\r\n",respond);
+//	printf("%s\r\n",respond);
+	printf(buffer);
+	printf("\r\n");
+
 }
 
 void ATCOMMANDLong(char *command, char* res)
 {
-	char respond[120] = {0};
+
 //	char *ptr= strstr(respond,res);
 //	while(ptr == NULL){
-	memset(respond,0,strlen(respond));
-	HAL_UART_Transmit(&huart3,(uint8_t *)command,strlen(command),0xff);
-	HAL_UART_Receive(&huart3,(uint8_t *)respond,120,2000);
+	memset(buffer,0,1100);
+	HAL_UART_Transmit(&huart1,(uint8_t *)command,strlen(command),0xff);
+	HAL_UART_Receive(&huart1,(uint8_t *)buffer,1100,2000);
 //	ptr = strstr(respond,res);
 //	}
-	printf("%s\r\n",respond);
+	printf(buffer);
+	printf("\r\n");
 }
 
 void ATCOMMAND_IT(char *command)
 {
-	HAL_UART_Transmit(&huart4,(uint8_t *)command,strlen(command),0xff);
+	HAL_UART_Transmit(&huart1,(uint8_t *)command,strlen(command),0xff);
 }
 
 void modem_reset_rtos()
@@ -270,11 +274,11 @@ void NBIOT_setup(void)
 	char csq_cmp[] = "+CSQ:";
 	ATCOMMAND(csq,csq_cmp);
 
-	char creg[]="AT+CREG=1\r\n";
+	char creg[]="AT+CREG?\r\n";
 	char creg_cmp[] = "+CREG";
 	ATCOMMAND(creg,creg_cmp);
 
-	char cgreg[]="AT+CGREG=1\r\n";
+	char cgreg[]="AT+CGREG?\r\n";
 	char cgreg_cmp[] = "+CGREG";
 	ATCOMMAND(cgreg,cgreg_cmp);
 
@@ -361,12 +365,12 @@ void bearer_config(void)
 	char csq[]="AT+SAPBR=0,1\r\n";
 //	ATCOMMAND_IT(csq);
 	ATCOMMAND(csq,csq);
-	HAL_Delay(1000);
+	HAL_Delay(500);
 
 	char ate[]="AT+SAPBR=3,1,\"Contype\",\"GPRS\"\r\n";
 //	ATCOMMAND_IT(ate);
 	ATCOMMAND(ate,ate);
-	HAL_Delay(1000);
+	HAL_Delay(500);
 
 	char cpin[]="AT+SAPBR=3,1,\"APN\",\"nb1internet\"\r\n";
 //	ATCOMMAND_IT(cpin);
@@ -412,15 +416,15 @@ void http_request(void)
 
 	char cpin[]="AT+HTTPPARA=\"URL\",\"www.flexisolve.com/bs/index.php/sensor/testing\"\r\n";
 //	ATCOMMAND_IT(cpin);
-	ATCOMMAND(cpin,cpin);
-	HAL_Delay(1000);
+	ATCOMMANDLong(cpin,cpin);
+//	HAL_Delay(500);
 
 	char csq[]="AT+HTTPACTION=0\r\n";
 //	ATCOMMAND_IT(csq);
 	ATCOMMANDLong(csq,csq);
-	HAL_Delay(1000);
+	HAL_Delay(3000);
 
-	sprintf(uart4_at,"AT+HTTPREAD");
+//	sprintf(uart4_at,"AT+HTTPREAD");
 	char creg[]="AT+HTTPREAD\r\n";
 //	ATCOMMAND_IT(creg);
 	ATCOMMANDLong(creg,creg);
@@ -465,19 +469,17 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_UART4_Init();
-  MX_UART5_Init();
   MX_USART1_UART_Init();
   MX_USART3_UART_Init();
-  MX_LPUART1_UART_Init();
   /* USER CODE BEGIN 2 */
   if(debug==1) printf("START\r\n please wait Modem Starting in 10s\r\n");
-  HAL_UART_Transmit(&huart4, "START\r\n",7,10);
+//  HAL_UART_Transmit(&huart4, "START\r\n",7,10);
   hard_reset_mdm();
-  HAL_UART_Receive(&huart4,buffer_mdm,1100,10000);
+  HAL_UART_Receive(&huart1,buffer_mdm,1100,10000);
   printf(buffer_mdm);
   HAL_Delay(1000);
   memset(buffer_mdm,0,1100);
-  NBIOT_setup();
+//  NBIOT_setup();
   //enable uart interrupt
 //  HAL_UART_Receive_IT(&huart1,(uint8_t *)uart1_buf,1);
 //  HAL_UART_Receive_IT(&huart3,(uint8_t *)uart3_buf,1);
@@ -487,11 +489,11 @@ int main(void)
   HAL_Delay(1000);
   HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
   HAL_Delay(1000);
-  HAL_UART_Transmit(&huart1, "A1\r\n",4,10);
+//  HAL_UART_Transmit(&huart1, "AT\r\n",4,10);
 //  HAL_UART_Transmit(&huart3, "AT\r\n",4,10);
 //  HAL_UART_Transmit(&huart4, "AT\r\n",4,10);
-  HAL_UART_Transmit(&huart5, "A5\r\n",4,10);
-  if(debug==1) printf("GO\r\n");
+//  HAL_UART_Transmit(&huart5, "A5\r\n",4,10);
+//  if(debug==1) printf("GO\r\n");
 //  hard_reset_mdm();
 //  NBIOT_setup_IT();
 //  MQTT_setup();
@@ -509,26 +511,40 @@ int main(void)
 //	  }
 //	  else {
 	  memset(uart4_at,0,20);
-	  sprintf(uart4_at,"AT+CPSI?");
-	  HAL_UART_Transmit(&huart3, "AT+CPSI?\r\n",10,10);
-	  HAL_UART_Receive(&huart3,buffer,1100,2000);
+	  sprintf(uart4_at,"AT+CPSI?\r\n");
+//	  printf(uart4_at);
+//	  HAL_Delay(500);
+//	  printf((uint8_t *)uart4_at);
+//	  HAL_Delay(500);
+//	  sprintf(uart4_at,"AT+CPSI?");
+//	  HAL_UART_Transmit(&huart1, "AT+CPSI?\r\n",10,10);
+	  memset(buffer,0,1100);
+	  if(HAL_UART_Transmit(&huart1, uart4_at,10,100)==HAL_OK){
+		  bugint = HAL_UART_Receive(&huart1,buffer,1100,2000);
+	  }
 	  printf(buffer);
 	  HAL_Delay(1000);
 	  memset(buffer,0,1100);
-	  NBIOT_setup();
+	  if(cnt1==0) NBIOT_setup();
+	  else {
+		  printf("%d",cnt1);
+		 http_request();
+		 if(cnt1>=5) cnt1=-1;
+	  }
+	  cnt1++;
 //	  bearer_config();
-//	  HAL_Delay(1000);
-//	  http_request();
-//	  HAL_UART_Transmit(&huart3, "AT\r\n",4,10);
-//	  HAL_UART_Receive(&huart3,buffer,1100,2000);
-//	  printf(buffer);
-//	  HAL_Delay(1000);
-//	  memset(buffer,0,1100);
-	  HAL_UART_Transmit(&huart5, "AT\r\n",4,10);
-	  HAL_UART_Receive(&huart5,buffer,1100,2000);
+//	  HAL_Delay(500);
+	  HAL_UART_Transmit(&huart3, "AT\r\n",4,10);
+	  HAL_UART_Receive(&huart3,buffer,1100,3000);
 	  printf(buffer);
-	  HAL_Delay(1000);
+	  HAL_Delay(500);
 	  memset(buffer,0,1100);
+//	  HAL_UART_Transmit(&huart4, "AT\r\n",4,10);
+//	  HAL_UART_Receive(&huart4,buffer,1100,1000);
+//	  printf(buffer);
+//	  HAL_Delay(500);
+//	  memset(buffer,0,1100);
+	  HAL_Delay(500);
 //	  }
 //	  switch(rxavailable){
 //	  case 1 :	HAL_UART_Transmit(&huart5, (uint8_t *)uart1_data,strlen(uart1_data),500);
@@ -590,7 +606,7 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_MSI;
   RCC_OscInitStruct.PLL.PLLM = 1;
-  RCC_OscInitStruct.PLL.PLLN = 40;
+  RCC_OscInitStruct.PLL.PLLN = 36;
   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV7;
   RCC_OscInitStruct.PLL.PLLQ = RCC_PLLQ_DIV2;
   RCC_OscInitStruct.PLL.PLLR = RCC_PLLR_DIV2;
@@ -612,13 +628,10 @@ void SystemClock_Config(void)
     Error_Handler();
   }
   PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USART1|RCC_PERIPHCLK_USART3
-                              |RCC_PERIPHCLK_UART4|RCC_PERIPHCLK_UART5
-                              |RCC_PERIPHCLK_LPUART1;
+                              |RCC_PERIPHCLK_UART4;
   PeriphClkInit.Usart1ClockSelection = RCC_USART1CLKSOURCE_PCLK2;
   PeriphClkInit.Usart3ClockSelection = RCC_USART3CLKSOURCE_PCLK1;
   PeriphClkInit.Uart4ClockSelection = RCC_UART4CLKSOURCE_PCLK1;
-  PeriphClkInit.Uart5ClockSelection = RCC_UART5CLKSOURCE_PCLK1;
-  PeriphClkInit.Lpuart1ClockSelection = RCC_LPUART1CLKSOURCE_PCLK1;
   if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
   {
     Error_Handler();
@@ -632,40 +645,6 @@ void SystemClock_Config(void)
   /** Enable MSI Auto calibration
   */
   HAL_RCCEx_EnableMSIPLLMode();
-}
-
-/**
-  * @brief LPUART1 Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_LPUART1_UART_Init(void)
-{
-
-  /* USER CODE BEGIN LPUART1_Init 0 */
-
-  /* USER CODE END LPUART1_Init 0 */
-
-  /* USER CODE BEGIN LPUART1_Init 1 */
-
-  /* USER CODE END LPUART1_Init 1 */
-  hlpuart1.Instance = LPUART1;
-  hlpuart1.Init.BaudRate = 115200;
-  hlpuart1.Init.WordLength = UART_WORDLENGTH_8B;
-  hlpuart1.Init.StopBits = UART_STOPBITS_1;
-  hlpuart1.Init.Parity = UART_PARITY_NONE;
-  hlpuart1.Init.Mode = UART_MODE_TX_RX;
-  hlpuart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-  hlpuart1.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
-  hlpuart1.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
-  if (HAL_UART_Init(&hlpuart1) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN LPUART1_Init 2 */
-
-  /* USER CODE END LPUART1_Init 2 */
-
 }
 
 /**
@@ -704,41 +683,6 @@ static void MX_UART4_Init(void)
 }
 
 /**
-  * @brief UART5 Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_UART5_Init(void)
-{
-
-  /* USER CODE BEGIN UART5_Init 0 */
-
-  /* USER CODE END UART5_Init 0 */
-
-  /* USER CODE BEGIN UART5_Init 1 */
-
-  /* USER CODE END UART5_Init 1 */
-  huart5.Instance = UART5;
-  huart5.Init.BaudRate = 115200;
-  huart5.Init.WordLength = UART_WORDLENGTH_8B;
-  huart5.Init.StopBits = UART_STOPBITS_1;
-  huart5.Init.Parity = UART_PARITY_NONE;
-  huart5.Init.Mode = UART_MODE_TX_RX;
-  huart5.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-  huart5.Init.OverSampling = UART_OVERSAMPLING_16;
-  huart5.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
-  huart5.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
-  if (HAL_UART_Init(&huart5) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN UART5_Init 2 */
-
-  /* USER CODE END UART5_Init 2 */
-
-}
-
-/**
   * @brief USART1 Initialization Function
   * @param None
   * @retval None
@@ -762,7 +706,9 @@ static void MX_USART1_UART_Init(void)
   huart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
   huart1.Init.OverSampling = UART_OVERSAMPLING_16;
   huart1.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
-  huart1.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
+  huart1.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_RXOVERRUNDISABLE_INIT|UART_ADVFEATURE_DMADISABLEONERROR_INIT;
+  huart1.AdvancedInit.OverrunDisable = UART_ADVFEATURE_OVERRUN_DISABLE;
+  huart1.AdvancedInit.DMADisableonRxError = UART_ADVFEATURE_DMA_DISABLEONRXERROR;
   if (HAL_UART_Init(&huart1) != HAL_OK)
   {
     Error_Handler();
@@ -797,7 +743,9 @@ static void MX_USART3_UART_Init(void)
   huart3.Init.HwFlowCtl = UART_HWCONTROL_NONE;
   huart3.Init.OverSampling = UART_OVERSAMPLING_16;
   huart3.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
-  huart3.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
+  huart3.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_RXOVERRUNDISABLE_INIT|UART_ADVFEATURE_DMADISABLEONERROR_INIT;
+  huart3.AdvancedInit.OverrunDisable = UART_ADVFEATURE_OVERRUN_DISABLE;
+  huart3.AdvancedInit.DMADisableonRxError = UART_ADVFEATURE_DMA_DISABLEONRXERROR;
   if (HAL_UART_Init(&huart3) != HAL_OK)
   {
     Error_Handler();
@@ -822,7 +770,6 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOH_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
-  __HAL_RCC_GPIOD_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOA, LED_Pin|PWRKEY_Pin, GPIO_PIN_RESET);
